@@ -327,7 +327,7 @@ body { background: var(--ink); color: var(--paper); font-family: var(--body); fo
     if (paused) return;
     if (idx >= SL - 1) return finish();
     show(idx + 1);
-    timer = setTimeout(step, idx >= SL - 1 ? 1700 : delays[idx]);   // 마지막(첫 사진)은 잠시 또렷하게 보여준 뒤 반전
+    timer = setTimeout(step, idx >= SL - 1 ? 800 : delays[idx]);   // 마지막(첫 사진)은 잠시 또렷하게 보여준 뒤 반전
   }
   let replayTimer = null;
   const reduceMotionTop = matchMedia("(prefers-reduced-motion: reduce)").matches;
