@@ -300,6 +300,7 @@ body { background: var(--ink); color: var(--paper); font-family: var(--body); fo
 <script>
 (() => {
   const N = 47, SLOW = 12;
+  const SL = N + 1;   // 슬라이드 수: 마지막에 첫 번째 사진을 한 번 더 보여줌
   const src = i => `img/${String(i + 1).padStart(2, "0")}.jpg`;
   const track = document.getElementById("track"), viewport = document.getElementById("viewport");
   const cur = document.getElementById("cur"), reveal = document.getElementById("reveal");
@@ -309,9 +310,9 @@ body { background: var(--ink); color: var(--paper); font-family: var(--body); fo
   document.getElementById("revealCount").textContent = N;
 
   const slides = [];
-  for (let i = 0; i < N; i++) {
+  for (let i = 0; i < SL; i++) {
     const d = document.createElement("div"); d.className = "slide";
-    const im = new Image(); im.src = src(i); im.alt = `환자 미소 사진 ${i + 1}`; im.decoding = "async";
+    const im = new Image(); im.src = src(i % N); im.alt = `환자 미소 사진 ${i % N + 1}`; im.decoding = "async";
     d.appendChild(im); track.appendChild(d); slides.push(d);
   }
 
@@ -319,8 +320,8 @@ body { background: var(--ink); color: var(--paper); font-family: var(--body); fo
   const slowSteps = [1443, 1300, 1150, 950, 880, 800, 710, 620, 530, 440, 340, 270];
   const PACE = 0.97; // 전체 속도 배율 (클수록 천천히)
   const delays = [];
-  for (let i = 0; i < N - 1; i++) {
-    const base = i < SLOW ? slowSteps[i] : 220 * Math.pow(45 / 220, (i - SLOW) / Math.max(1, N - 2 - SLOW));
+  for (let i = 0; i < SL - 1; i++) {
+    const base = i < SLOW ? slowSteps[i] : 220 * Math.pow(45 / 220, (i - SLOW) / Math.max(1, SL - 2 - SLOW));
     delays.push(Math.round(base * PACE));
   }
 
@@ -334,13 +335,13 @@ body { background: var(--ink); color: var(--paper); font-family: var(--body); fo
     track.classList.toggle("fast", d < 300);
     track.style.transition = `transform ${Math.min(0.55, d * 0.8 / 1000)}s cubic-bezier(.22,.7,.2,1)`;
     track.style.transform = `translateX(${-x}px)`;
-    cur.textContent = String(i + 1).padStart(2, "0");
+    cur.textContent = String(Math.min(i + 1, N)).padStart(2, "0");
   }
   function step() {
     if (paused) return;
-    if (idx >= N - 1) return finish();
+    if (idx >= SL - 1) return finish();
     show(idx + 1);
-    timer = setTimeout(step, idx >= N - 1 ? 900 : delays[idx]);
+    timer = setTimeout(step, idx >= SL - 1 ? 900 : delays[idx]);
   }
   let replayTimer = null;
   const reduceMotionTop = matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -630,7 +631,7 @@ body { background: var(--ink); color: var(--paper); font-family: var(--body); fo
   teamAll.addEventListener("click", () => openAlbum(teamSet, teamAll));
 
   // 화면에 들어오면 시작, 움직임 줄이기 설정이면 바로 결과
-  if (matchMedia("(prefers-reduced-motion: reduce)").matches) { show(N - 1); finish(); return; }
+  if (matchMedia("(prefers-reduced-motion: reduce)").matches) { show(SL - 1); finish(); return; }
   show(0);
   let started = false;
   const go = () => { if (!started) { started = true; start(); } };
