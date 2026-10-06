@@ -90,9 +90,13 @@ body { background: var(--ink); color: var(--paper); font-family: var(--body); fo
 
 /* 크게 보기 */
 .lightbox { position: fixed; inset: 0; background: rgba(5,9,14,.94); display: grid; place-items: center; padding: 16px; z-index: 10; }
-.lightbox img { max-width: min(1160px, 100%); max-height: 86vh; border-radius: 4px; }
-.lightbox .close { position: absolute; top: calc(16px + env(safe-area-inset-top, 0px)); right: 16px; }
-.lightbox img { touch-action: pan-y; user-select: none; -webkit-user-drag: none; }
+.lightbox { touch-action: none; overscroll-behavior: contain; }
+.lb-box { display: flex; flex-direction: column; align-items: flex-end; gap: 14px; max-width: 100%; }
+.lightbox img { max-width: min(1160px, 100%); max-height: 72vh; border-radius: 4px; touch-action: none; user-select: none; -webkit-user-drag: none; }
+.lb-close { font: 700 17px/1 var(--body); color: #0b1420; background: var(--paper); border: 0; border-radius: 999px; padding: 14px 26px; cursor: pointer; }
+.lb-close:hover { background: var(--accent); }
+.album-close-end { display: block; width: 100%; margin-top: 16px; padding: 18px 0; font-size: 18px; border-radius: 12px; }
+.lb-close:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
 .lb-nav { position: absolute; top: 50%; transform: translateY(-50%); width: 52px; height: 52px; border-radius: 50%;
   border: 1px solid var(--line); background: rgba(13,21,32,.7); color: var(--paper); cursor: pointer;
   display: grid; place-items: center; }
@@ -266,16 +270,16 @@ body { background: var(--ink); color: var(--paper); font-family: var(--body); fo
   <div class="wrap">
     <div class="album-head">
       <h3 id="albumTitle">전체 사진<span id="albumCount">47장</span></h3>
-      <button class="btn" id="albumClose" type="button">닫기</button>
+      <button class="lb-close" id="albumClose" type="button">닫기</button>
     </div>
     <div class="grid" id="grid"></div>
+    <button class="lb-close album-close-end" id="albumClose2" type="button">닫기</button>
   </div>
 </div>
 
 <div class="lightbox" id="lightbox" hidden>
-  <button class="btn close" id="lbClose" type="button">닫기</button>
   <button class="lb-nav lb-prev" id="lbPrev" type="button" aria-label="이전 사진"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg></button>
-  <img id="lbImg" alt="">
+  <div class="lb-box"><img id="lbImg" alt=""><button class="lb-close" id="lbClose" type="button">닫기</button></div>
   <button class="lb-nav lb-next" id="lbNext" type="button" aria-label="다음 사진"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5l7 7-7 7"/></svg></button>
   <div class="lb-count" id="lbCount"></div>
 </div>
@@ -373,13 +377,22 @@ body { background: var(--ink); color: var(--paper); font-family: var(--body); fo
   };
   albumOpen.addEventListener("click", () => openAlbum(smileSet, albumOpen));
   document.getElementById("albumClose").addEventListener("click", closeAlbum);
+  document.getElementById("albumClose2").addEventListener("click", closeAlbum);
   const smileSet = { n: N, src, alt: i => `환자 미소 사진 ${i + 1}`, cap: () => "" };
   let lbSet = smileSet, lbIdx = 0;
+  // 크게 보기 동안 뒤 페이지가 움직이지 않게 잠금
+  let lockY = 0;
+  function lockScroll(on) {
+    const st = document.body.style;
+    if (on) { if (!album.hidden) return; lockY = scrollY; st.position = "fixed"; st.top = `-${lockY}px`; st.left = "0"; st.right = "0"; }
+    else if (st.position === "fixed") { st.position = st.top = st.left = st.right = ""; scrollTo(0, lockY); }
+  }
   function openLb(set, i) {
     lbSet = set; lbIdx = (i + set.n) % set.n;
     lbImg.src = set.src(lbIdx); lbImg.alt = set.alt(lbIdx);
     const c = set.cap(lbIdx);
     document.getElementById("lbCount").textContent = `${lbIdx + 1} / ${set.n}` + (c ? `  ·  ${c}` : "");
+    if (lb.hidden) lockScroll(true);
     lb.hidden = false;
   }
   const step2 = d => openLb(lbSet, lbIdx + d);
@@ -393,7 +406,8 @@ body { background: var(--ink); color: var(--paper); font-family: var(--body); fo
     const dx = e.changedTouches[0].clientX - sx, dy = e.changedTouches[0].clientY - sy; sx = null;
     if (Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy)) step2(dx < 0 ? 1 : -1);
   });
-  const closeLb = () => { lb.hidden = true; idleUntil = performance.now() + 2500; };
+  const closeLb = () => { lb.hidden = true; lockScroll(false); idleUntil = performance.now() + 2500; };
+  lb.addEventListener("touchmove", e => e.preventDefault(), { passive: false });
   document.getElementById("lbClose").addEventListener("click", closeLb);
   lb.addEventListener("click", e => { if (e.target === lb) closeLb(); });
   addEventListener("keydown", e => {
