@@ -56,7 +56,8 @@ body { background: var(--ink); color: var(--paper); font-family: var(--body); fo
   opacity: 0; transition: opacity .9s ease; }
 .reveal.show { opacity: 1; }
 @media (prefers-reduced-motion: reduce) { .reveal p { transition: none; } .reveal.show p { transition-delay: 0s; } }
-.reveal h2 { font-family: var(--display); font-weight: 700; font-size: clamp(34px, calc(var(--pw) * 0.057), 68px); line-height: 1.3; margin: 0; text-wrap: balance; }
+.reveal h2 { font-family: var(--display); font-weight: 700; font-size: 28px; line-height: 1.3; margin: 0; white-space: nowrap; }
+.reveal h2 em { display: inline-block; margin-top: 6px; font-size: 50px; line-height: 1.1; letter-spacing: .04em; }
 .reveal h2 em { font-style: normal; color: var(--accent); }
 .reveal p { margin: 22px 0 0; font-family: var(--display); font-weight: 500; font-size: 17px; line-height: 1.6; color: #c3ccd7;
   opacity: 0; transform: translateY(10px); transition: opacity .9s ease, transform .9s ease; }
@@ -126,25 +127,12 @@ body { background: var(--ink); color: var(--paper); font-family: var(--body); fo
 .bench-note { margin-top: 26px; font-size: 15px; font-weight: 500; color: var(--paper); opacity: .7; }
 
 
-/* ── 4. 내원 한 번 → 완성 (왼쪽 고정 문장, 오른쪽 종이 넘김) ── */
-.proc { padding-block: 96px 104px; border-top: 1px solid var(--line); }
-.proc-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 440px); gap: clamp(32px, calc(var(--pw) * 0.06), 96px); align-items: center; }
-.proc-media { width: 100%; }
-.proc-frame { position: relative; aspect-ratio: 1 / 1; border-radius: 6px; overflow: hidden; background: var(--ink-2); cursor: grab; touch-action: pan-y; user-select: none; }
-.proc-frame canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
-.proc-cap { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; margin-top: 16px; }
-.proc-step { font-size: clamp(16px, calc(var(--pw) * 0.017), 19px); font-weight: 600; color: var(--paper); }
-.proc-num { position: absolute; top: 12px; right: 12px; z-index: 1; font: 600 15px/1 var(--mono); color: #fff;
-  background: rgba(10,14,20,.6); padding: 8px 11px; border-radius: 999px; font-variant-numeric: tabular-nums; pointer-events: none; }
-.proc-dots { display: flex; gap: 6px; margin-top: 12px; }
-.proc-dots i { flex: 1; height: 3px; border-radius: 2px; background: var(--line); transition: background .4s ease; }
-.proc-dots i.on { background: var(--accent); }
-@media all {
-  .proc { padding-block: 64px 72px; }
-  .proc-grid { grid-template-columns: 1fr; }
-  .proc-media { max-width: 420px; justify-self: center; }
-}
-
+.proc-grid6 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
+.proc-grid6 button { position: relative; aspect-ratio: 1; padding: 0; border: 0; border-radius: 6px; overflow: hidden; background: var(--ink-2); cursor: zoom-in; }
+.proc-grid6 img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.proc-grid6 span { position: absolute; left: 6px; top: 6px; min-width: 20px; height: 20px; padding: 0 5px; border-radius: 10px; background: rgba(10,14,20,.65);
+  color: #fff; font: 600 12px/20px var(--mono); text-align: center; }
+.proc-grid6 button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 .team-hero { display: block; width: 100%; aspect-ratio: 2 / 3; padding: 0; border: 0; border-radius: 6px; overflow: hidden; background: var(--ink-2); cursor: zoom-in; }
 .team-hero img { width: 100%; height: 100%; object-fit: cover; display: block; }
 .team-hero:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
@@ -199,7 +187,7 @@ body { background: var(--ink); color: var(--paper); font-family: var(--body); fo
     <div class="track" id="track"></div>
     <div class="reveal" id="reveal" aria-live="polite">
       <div class="wrap">
-        <h2>방금 지나간 <span id="revealCount">47</span>분,<br><em>전부 틀니입니다.</em></h2>
+        <h2>You were looking at<br><em>DENTURES</em></h2>
         <p>얼굴과 자연스럽게 조화되는 보철.<br>그것이 저희의 철학입니다.</p>
       </div>
     </div>
@@ -221,20 +209,14 @@ body { background: var(--ink); color: var(--paper); font-family: var(--body); fo
   <button class="album-link" id="pfAll" type="button">전체 사진 보기</button>
 </section>
 
-<section class="proc" aria-labelledby="procTitle">
-  <div class="wrap proc-grid">
-    <div class="proc-text">
-      <span class="bench-kicker">1 Step Method</span>
-      <h2 id="procTitle">한 번의 내원으로<br>완성까지</h2>
-      <p>한 번의 기록에 얼굴의 기준과 교합을 담고,<br>나머지는 작업대에서 끝냅니다.</p>
-    </div>
-    <div class="proc-media">
-      <div class="proc-frame" id="procFrame" role="img" aria-label="교합 기록부터 완성까지 6단계 사진"><canvas id="procCanvas"></canvas><span class="proc-num" id="procNum"></span></div>
-      <div class="proc-cap"><span class="proc-step" id="procStep"></span></div>
-      <div class="proc-dots" id="procDots"></div>
-      <button class="album-link" id="procAll" type="button">전체 사진 보기</button>
-    </div>
+<section class="bench" aria-labelledby="procTitle">
+  <div class="wrap bench-head">
+    <span class="bench-kicker">1 Step Method</span>
+    <h2 id="procTitle">한 번의 내원으로<br>완성까지</h2>
+    <p>한 번의 기록에 얼굴의 기준과 교합을 담고,<br>나머지는 작업대에서 끝냅니다.</p>
   </div>
+  <div class="wrap"><div class="proc-grid6" id="procGrid"></div></div>
+  <button class="album-link" id="procAll" type="button">전체 사진 보기</button>
 </section>
 
 <section class="bench" aria-labelledby="impTitle">
@@ -308,7 +290,6 @@ body { background: var(--ink); color: var(--paper); font-family: var(--body); fo
   const toggle = document.getElementById("toggle"), replay = document.getElementById("replay");
   const albumOpen = document.getElementById("albumOpen");
   document.getElementById("tot").textContent = N;
-  document.getElementById("revealCount").textContent = N;
 
   const slides = [];
   for (let i = 0; i < SL; i++) {
@@ -389,7 +370,6 @@ body { background: var(--ink); color: var(--paper); font-family: var(--body); fo
   };
   const closeAlbum = () => {
     album.hidden = true; document.body.style.overflow = ""; albumFrom && albumFrom.focus(); if (wasPlaying) setPaused(false);
-    if (typeof schedule === "function") schedule();
   };
   albumOpen.addEventListener("click", () => openAlbum(smileSet, albumOpen));
   document.getElementById("albumClose").addEventListener("click", closeAlbum);
@@ -413,7 +393,7 @@ body { background: var(--ink); color: var(--paper); font-family: var(--body); fo
     const dx = e.changedTouches[0].clientX - sx, dy = e.changedTouches[0].clientY - sy; sx = null;
     if (Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy)) step2(dx < 0 ? 1 : -1);
   });
-  const closeLb = () => { lb.hidden = true; idleUntil = performance.now() + 2500; if (typeof schedule === "function") schedule(); };
+  const closeLb = () => { lb.hidden = true; idleUntil = performance.now() + 2500; };
   document.getElementById("lbClose").addEventListener("click", closeLb);
   lb.addEventListener("click", e => { if (e.target === lb) closeLb(); });
   addEventListener("keydown", e => {
@@ -477,108 +457,21 @@ body { background: var(--ink); color: var(--paper); font-family: var(--body); fo
   addEventListener("pointerup", () => { if (dragX === null) return; dragX = null; marquee.classList.remove("dragging"); rest(); setTimeout(() => { moved = false; }, 0); });
   marquee.addEventListener("wheel", e => { if (Math.abs(e.deltaY) > Math.abs(e.deltaX) && !e.shiftKey) return; rest(); }, { passive: true });
 
-  // 내원 한 번 → 완성: 오른쪽 위 모서리부터 종이처럼 접히며 다음 사진으로
+  // 1 Step Method: 작업대 섹션과 같은 흐르는 띠
   const PROC = ["체어에서 얼굴 기준·교합 기록", "한 번에 받은 기록", "레이저로 정중선 맞춤", "교합기 마운팅", "배열", "완성"];
   const procSet = { n: PROC.length, shape: "square", src: i => `img/proc/${i + 1}.jpg`, alt: i => `과정 ${i + 1}: ${PROC[i]}`, cap: i => PROC[i] };
-  const pc = document.getElementById("procCanvas"), pctx = pc.getContext("2d"), pframe = document.getElementById("procFrame");
-  const pImgs = PROC.map((_, i) => { const im = new Image(); im.src = procSet.src(i); im.onload = () => { if (!pAnim) drawProc(); }; return im; });
-  const pDots = document.getElementById("procDots");
-  PROC.forEach(() => pDots.appendChild(document.createElement("i")));
-  let pCur = 0, pAnim = null, pVisible = false, pTimer = null, pFlips = 0;
-  const FLIP_MS = 700, FIRST_HOLD_MS = 1800, HOLD_MS = 2200;   // 넘기는 시간, 첫 장 머무는 시간, 나머지 머무는 시간
-  function pSize() {
-    const dpr = Math.min(2, devicePixelRatio || 1), r = pframe.getBoundingClientRect();
-    pc.width = Math.round(r.width * dpr); pc.height = Math.round(r.height * dpr); if (!pAnim) drawProc();
+  const procGrid = document.getElementById("procGrid");
+  for (let i = 0; i < procSet.n; i++) {
+    const b = document.createElement("button"); b.type = "button"; b.setAttribute("aria-label", `${procSet.alt(i)} 크게 보기`);
+    const im = new Image(); im.src = procSet.src(i); im.alt = ""; b.appendChild(im);
+    const n = document.createElement("span"); n.textContent = i + 1; b.appendChild(n);
+    b.addEventListener("click", () => openLb(procSet, i));
+    procGrid.appendChild(b);
   }
-  function cover(im, W, H) {
-    if (!im.complete || !im.naturalWidth) { pctx.fillStyle = "#16212f"; pctx.fillRect(0, 0, W, H); return; }
-    const s = Math.max(W / im.naturalWidth, H / im.naturalHeight), w = im.naturalWidth * s, h = im.naturalHeight * s;
-    pctx.drawImage(im, (W - w) / 2, (H - h) / 2, w, h);
-  }
-  // 접는 선: (W - x) + y = d  → 오른쪽 위 모서리에서 대각선으로 넘어감
-  function clipHalf(pts, W, d, keepBelow) {
-    const f = q => (W - q[0]) + q[1] - d, out = [];
-    for (let i = 0; i < pts.length; i++) {
-      const a = pts[i], b = pts[(i + 1) % pts.length], fa = f(a), fb = f(b);
-      const ina = keepBelow ? fa < 0 : fa >= 0, inb = keepBelow ? fb < 0 : fb >= 0;
-      if (ina) out.push(a);
-      if (ina !== inb) { const t = fa / (fa - fb); out.push([a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t]); }
-    }
-    return out;
-  }
-  const poly = pts => { pctx.beginPath(); pts.forEach((q, i) => i ? pctx.lineTo(q[0], q[1]) : pctx.moveTo(q[0], q[1])); pctx.closePath(); };
-  function drawProc(t) {
-    const W = pc.width, H = pc.height; if (!W) return;
-    const cur = pImgs[pCur], nxt = pImgs[(pCur + 1) % pImgs.length];
-    pctx.clearRect(0, 0, W, H);
-    if (!t) { cover(cur, W, H); return; }
-    const d = t * (W + H) * 1.06, rect = [[0, 0], [W, 0], [W, H], [0, H]];
-    const gone = clipHalf(rect, W, d, true), stay = clipHalf(rect, W, d, false);
-    const mx = W - d / 2, my = d / 2, k = Math.min(W * .18, d * .5);
-    // 아래 장(다음 사진) + 접힌 선 그림자
-    pctx.save(); poly(gone); pctx.clip(); cover(nxt, W, H);
-    const sh = pctx.createLinearGradient(mx, my, mx + k, my - k);
-    sh.addColorStop(0, "rgba(0,0,0,.45)"); sh.addColorStop(1, "rgba(0,0,0,0)");
-    pctx.fillStyle = sh; pctx.fillRect(0, 0, W, H); pctx.restore();
-    // 아직 남아 있는 현재 사진
-    if (stay.length > 2) { pctx.save(); poly(stay); pctx.clip(); cover(cur, W, H); pctx.restore(); }
-    // 접혀 넘어오는 종이 뒷면
-    const flap = gone.map(([x, y]) => [y + (W - d), x - (W - d)]);
-    if (flap.length > 2) {
-      pctx.save(); poly(flap);
-      pctx.shadowColor = "rgba(0,0,0,.4)"; pctx.shadowBlur = W * .05; pctx.shadowOffsetX = -W * .012; pctx.shadowOffsetY = W * .012;
-      pctx.fillStyle = "#e9e4da"; pctx.fill(); pctx.shadowColor = "transparent";
-      pctx.clip();
-      const g = pctx.createLinearGradient(mx, my, W - d, d);
-      g.addColorStop(0, "#cfc8bb"); g.addColorStop(.25, "#f7f3ec"); g.addColorStop(1, "#e2dccf");
-      pctx.fillStyle = g; pctx.fillRect(0, 0, W, H);
-      pctx.globalAlpha = .08; pctx.transform(0, 1, 1, 0, W - d, -(W - d)); cover(cur, W, H);
-      pctx.restore();
-    }
-  }
-  function pLabel() {
-    document.getElementById("procStep").textContent = PROC[pCur];
-    document.getElementById("procNum").textContent = `${pCur + 1} / ${PROC.length}`;
-    [...pDots.children].forEach((el, i) => el.classList.toggle("on", i <= pCur));
-  }
-  const ease = x => x < .5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2;
-  // dir = 1: 다음 장(모서리부터 접혀 넘어감), dir = -1: 이전 장(접힌 종이가 다시 내려옴)
-  function flip(dir = 1) {
-    if (pAnim) return; clearTimeout(pTimer);
-    const n = PROC.length;
-    if (reduceMotion) { pCur = (pCur + dir + n) % n; if (dir > 0) pFlips++; drawProc(); pLabel(); return schedule(); }
-    if (dir < 0) pCur = (pCur - 1 + n) % n;          // 이전 장을 '넘겨진 상태'에서 되돌림
-    const t0 = performance.now();
-    pAnim = requestAnimationFrame(function step(now) {
-      const x = Math.min(1, (now - t0) / FLIP_MS); drawProc(dir > 0 ? ease(x) : ease(1 - x));
-      if (x < 1) pAnim = requestAnimationFrame(step);
-      else { pAnim = null; if (dir > 0) { pCur = (pCur + 1) % n; pFlips++; } drawProc(); pLabel(); schedule(); }
-    });
-  }
-  function schedule() { clearTimeout(pTimer); if (pFlips < PROC.length && pVisible && !document.hidden && lb.hidden && album.hidden) pTimer = setTimeout(flip, pFlips === 0 ? FIRST_HOLD_MS : HOLD_MS); }
-  // 손가락·마우스로 좌우 밀기: 왼쪽으로 밀면 다음, 오른쪽으로 밀면 이전, 톡 누르면 다음
-  // 직접 넘기기 시작하면 자동 넘김은 멈춤
-  let psx = null, psy = null;
-  pframe.addEventListener("pointerdown", e => { psx = e.clientX; psy = e.clientY; pframe.setPointerCapture?.(e.pointerId); });
-  pframe.addEventListener("pointerup", e => {
-    if (psx === null) return;
-    const dx = e.clientX - psx, dy = e.clientY - psy; psx = null;
-    if (Math.abs(dy) > Math.abs(dx) && Math.abs(dy) > 12) return;
-    pFlips = PROC.length;
-    if (dx <= -40) flip(1); else if (dx >= 40) flip(-1); else if (Math.abs(dx) < 10) flip(1);
-  });
-  pframe.addEventListener("pointercancel", () => { psx = null; });
-  pframe.addEventListener("dragstart", e => e.preventDefault());
   const procAll = document.getElementById("procAll");
-  procAll.addEventListener("click", () => { clearTimeout(pTimer); openAlbum(procSet, procAll); });
+  procAll.addEventListener("click", () => openAlbum(procSet, procAll));
   const pfAll = document.getElementById("pfAll");
   pfAll.addEventListener("click", () => openAlbum(pfSet, pfAll));
-  if ("ResizeObserver" in window) new ResizeObserver(pSize).observe(pframe); else addEventListener("resize", pSize);
-  pSize(); pLabel();
-  if ("IntersectionObserver" in window)
-    new IntersectionObserver(es => { pVisible = es.some(e => e.isIntersecting); pVisible ? schedule() : clearTimeout(pTimer); }, { threshold: .35 }).observe(pframe);
-  else { pVisible = true; schedule(); }
-  document.addEventListener("visibilitychange", schedule);
 
   // 임플란트 셋팅: 작업대 섹션과 같은 속도·동작의 흐르는 띠
   function makeBelt(marq, beltEl, set, spp) {
