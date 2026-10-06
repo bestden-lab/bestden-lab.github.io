@@ -51,7 +51,8 @@ body { background: var(--ink); color: var(--paper); font-family: var(--body); fo
 
 /* 멈춘 뒤 문장 */
 .reveal { position: absolute; inset: 0; display: grid; place-items: center; text-align: center; pointer-events: none;
-  background: radial-gradient(ellipse at center, rgba(13,21,32,.86) 0%, rgba(13,21,32,.94) 70%);
+  background: radial-gradient(ellipse at center, rgba(13,21,32,.66) 0%, rgba(13,21,32,.8) 75%);
+  text-shadow: 0 2px 14px rgba(0,0,0,.55);
   opacity: 0; transition: opacity .9s ease; }
 .reveal.show { opacity: 1; }
 @media (prefers-reduced-motion: reduce) { .reveal p { transition: none; } .reveal.show p { transition-delay: 0s; } }
@@ -341,7 +342,7 @@ body { background: var(--ink); color: var(--paper); font-family: var(--body); fo
     if (paused) return;
     if (idx >= SL - 1) return finish();
     show(idx + 1);
-    timer = setTimeout(step, idx >= SL - 1 ? 900 : delays[idx]);
+    timer = setTimeout(step, idx >= SL - 1 ? 1700 : delays[idx]);   // 마지막(첫 사진)은 잠시 또렷하게 보여준 뒤 반전
   }
   let replayTimer = null;
   const reduceMotionTop = matchMedia("(prefers-reduced-motion: reduce)").matches;
