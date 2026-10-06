@@ -54,9 +54,12 @@ body { background: var(--ink); color: var(--paper); font-family: var(--body); fo
   background: radial-gradient(ellipse at center, rgba(13,21,32,.86) 0%, rgba(13,21,32,.94) 70%);
   opacity: 0; transition: opacity .9s ease; }
 .reveal.show { opacity: 1; }
+@media (prefers-reduced-motion: reduce) { .reveal p { transition: none; } .reveal.show p { transition-delay: 0s; } }
 .reveal h2 { font-family: var(--display); font-weight: 700; font-size: clamp(34px, calc(var(--pw) * 0.057), 68px); line-height: 1.3; margin: 0; text-wrap: balance; }
 .reveal h2 em { font-style: normal; color: var(--accent); }
-.reveal p { margin: 18px 0 0; color: var(--muted); font-size: clamp(14px, calc(var(--pw) * 0.016), 17px); }
+.reveal p { margin: 22px 0 0; font-family: var(--display); font-weight: 500; font-size: 17px; line-height: 1.6; color: #c3ccd7;
+  opacity: 0; transform: translateY(10px); transition: opacity .9s ease, transform .9s ease; }
+.reveal.show p { opacity: 1; transform: none; transition-delay: 1.4s; }
 
 .controls { display: flex; gap: 10px; justify-content: center; margin-top: 28px; min-height: 40px; }
 .btn { font: 500 14px/1 var(--body); color: var(--paper); background: transparent; border: 1px solid var(--line);
@@ -154,9 +157,6 @@ body { background: var(--ink); color: var(--paper); font-family: var(--body); fo
 .letter-sign { margin-top: 18px; text-align: right; font-family: "Gowun Batang", var(--display); font-size: 15px; color: var(--muted); }
 .letter-sign b { display: block; margin-top: 2px; color: var(--paper); font-size: 18px; font-weight: 700; }
 .cta { padding-block: 40px 112px; }
-.cta-card { border: 1px solid var(--line); border-radius: 10px; padding: 28px 22px; background: var(--ink-2); }
-.cta-card h3 { font-family: var(--display); font-weight: 700; font-size: 24px; line-height: 1.4; margin: 10px 0 0; }
-.cta-card p { margin: 12px 0 0; font-size: 16px; font-weight: 500; line-height: 1.6; color: var(--paper); opacity: .8; }
 .cta-btns { display: grid; gap: 10px; margin-top: 24px; }
 .cta-btn { display: flex; align-items: center; justify-content: center; gap: 8px; min-height: 54px; border-radius: 10px;
   font: 700 17px/1 var(--body); text-decoration: none; cursor: pointer; border: 1px solid transparent; }
@@ -166,26 +166,17 @@ body { background: var(--ink); color: var(--paper); font-family: var(--body); fo
 .cta-btn.ghost { background: transparent; color: var(--paper); border-color: rgba(238,242,246,.28); }
 .cta-btn.ghost:hover { border-color: var(--accent); color: var(--accent); }
 .cta-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
-.site-foot { padding-block: 0 calc(40px + env(safe-area-inset-bottom, 0px)); text-align: center; font-size: 13px; color: var(--muted); letter-spacing: .04em; }
 
 
 /* 수가표 신청 시트 */
-.pf { display: grid; gap: 14px; margin-top: 22px; }
-.pf label { display: grid; gap: 6px; font-size: 14px; font-weight: 600; color: var(--paper); }
-.pf input[type=text] { width: 100%; min-height: 50px; border-radius: 8px; border: 1px solid rgba(238,242,246,.22); background: var(--ink);
-  color: var(--paper); font: 500 16px/1.4 var(--body); padding: 0 14px; }
-.pf input[type=text]::placeholder { color: #66758a; }
-.pf input[type=text]:focus { outline: 2px solid var(--accent); outline-offset: 1px; border-color: transparent; }
-.pf-at { position: relative; display: block !important; }
-.pf-at span { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: var(--muted); font-size: 16px; pointer-events: none; }
-.pf-at input[type=text] { padding-left: 32px; }
-.pf .cta-btn { width: 100%; margin-top: 4px; }
-.pf-msg { min-height: 22px; font-size: 15px; font-weight: 500; text-align: center; line-height: 1.6; }
-.pf-msg.ok { color: var(--accent); }
-.pf-msg.err { color: #f2a7a7; }
-.pf-done { display: grid; gap: 8px; text-align: center; padding: 18px 0 6px; }
-.pf-done b { font-family: var(--display); font-size: 20px; }
-.pf-done span { font-size: 15px; color: var(--paper); opacity: .8; line-height: 1.6; }
+.dm-btn { position: relative; overflow: hidden; display: flex; align-items: center; justify-content: center; gap: 10px; margin-top: 0;
+  min-height: 60px; border-radius: 12px; background: var(--accent); color: #0b1420; font: 700 19px/1 var(--body); text-decoration: none; }
+.dm-btn svg { width: 22px; height: 22px; flex: none; }
+.dm-btn .ig { width: 26px; height: 26px; }
+.dm-btn .arr { transition: transform .25s ease; }
+.dm-btn:hover { background: #b8d6f0; }
+.dm-btn:hover .arr { transform: translateX(4px); }
+.dm-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
 
 @media all {
   .stage { padding-block: 48px 32px; }
@@ -208,6 +199,7 @@ body { background: var(--ink); color: var(--paper); font-family: var(--body); fo
     <div class="reveal" id="reveal" aria-live="polite">
       <div class="wrap">
         <h2>방금 지나간 <span id="revealCount">47</span>분,<br><em>전부 틀니입니다.</em></h2>
+        <p>얼굴과 자연스럽게 조화되는 보철.<br>그것이 저희의 철학입니다.</p>
       </div>
     </div>
   </div>
@@ -278,23 +270,12 @@ body { background: var(--ink); color: var(--paper); font-family: var(--body); fo
   </div>
 </section>
 
-<section class="cta" id="contact" aria-labelledby="ctaTitle">
+<section class="cta" id="contact" aria-label="수가표 신청">
   <div class="wrap">
-    <div class="cta-card">
-      <span class="bench-kicker">Contact</span>
-      <h3 id="ctaTitle">수가표 신청</h3>
-      <p>원장님 인스타그램 아이디만 남겨주세요.<br>확인 후 DM으로 수가표를 보내드립니다.</p>
-      <form class="pf" id="priceForm" novalidate>
-        <label class="pf-at" aria-label="원장님 인스타그램 아이디"><span>@</span><input type="text" id="pfInsta" name="insta" autocapitalize="off" autocorrect="off" spellcheck="false" placeholder="instagram_id" required></label>
-        <button class="cta-btn primary" type="submit" id="pfSubmit">수가표 신청하기</button>
-        <div class="pf-msg" id="pfMsg" aria-live="polite"></div>
-      </form>
-      <div class="pf-done" id="pfDone" hidden><b>신청이 접수되었습니다.</b><span>확인 후 남겨주신 인스타그램으로<br>수가표를 보내드리겠습니다.</span></div>
-    </div>
+    <a class="dm-btn" id="dmBtn" href="https://ig.me/m/bestden_official" target="_blank" rel="noopener"><svg class="ig" viewBox="0 0 24 24" aria-hidden="true"><defs><radialGradient id="igGrad" cx="30%" cy="107%" r="150%"><stop offset="0" stop-color="#fdf497"/><stop offset=".05" stop-color="#fdf497"/><stop offset=".45" stop-color="#fd5949"/><stop offset=".6" stop-color="#d6249f"/><stop offset=".9" stop-color="#285AEB"/></radialGradient></defs><rect x="0" y="0" width="24" height="24" rx="6.5" fill="url(#igGrad)"/><rect x="5" y="5" width="14" height="14" rx="4.2" fill="none" stroke="#fff" stroke-width="1.8"/><circle cx="12" cy="12" r="3.3" fill="none" stroke="#fff" stroke-width="1.8"/><circle cx="16.4" cy="7.6" r="1.05" fill="#fff"/></svg>DM으로 수가표 신청하기<svg class="arr" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
   </div>
 </section>
 
-<footer class="site-foot">BESTDEN DENTAL LAB · 부천 송내</footer>
 
 
 
@@ -335,8 +316,8 @@ body { background: var(--ink); color: var(--paper); font-family: var(--body); fo
   }
 
   // 1~4번은 또박또박, 5~10번은 완만하게 빨라지고, 11~12번에서 이어 붙여 13번부터 빠른 구간 (ms)
-  const slowSteps = [1700, 1450, 1250, 950, 880, 800, 710, 620, 530, 440, 340, 270];
-  const PACE = 1.12; // 전체 속도 배율 (클수록 천천히)
+  const slowSteps = [1443, 1300, 1150, 950, 880, 800, 710, 620, 530, 440, 340, 270];
+  const PACE = 0.97; // 전체 속도 배율 (클수록 천천히)
   const delays = [];
   for (let i = 0; i < N - 1; i++) {
     const base = i < SLOW ? slowSteps[i] : 220 * Math.pow(45 / 220, (i - SLOW) / Math.max(1, N - 2 - SLOW));
@@ -361,12 +342,15 @@ body { background: var(--ink); color: var(--paper); font-family: var(--body); fo
     show(idx + 1);
     timer = setTimeout(step, idx >= N - 1 ? 900 : delays[idx]);
   }
+  let replayTimer = null;
+  const reduceMotionTop = matchMedia("(prefers-reduced-motion: reduce)").matches;
   function finish() {
     done = true; reveal.classList.add("show");
-    toggle.hidden = true; replay.hidden = false;
+    toggle.hidden = true;
+    clearTimeout(replayTimer); replayTimer = setTimeout(() => { if (done) replay.hidden = false; }, reduceMotionTop ? 0 : 2300);
   }
   function start() {
-    clearTimeout(timer); done = false; paused = false;
+    clearTimeout(timer); clearTimeout(replayTimer); done = false; paused = false;
     reveal.classList.remove("show"); toggle.hidden = false; toggle.textContent = "일시정지";
     replay.hidden = true;
     show(0); timer = setTimeout(step, delays[0]);
@@ -499,7 +483,7 @@ body { background: var(--ink); color: var(--paper); font-family: var(--body); fo
   const pDots = document.getElementById("procDots");
   PROC.forEach(() => pDots.appendChild(document.createElement("i")));
   let pCur = 0, pAnim = null, pVisible = false, pTimer = null, pFlips = 0;
-  const FLIP_MS = 700, HOLD_MS = 2800;   // 넘기는 시간, 머무는 시간
+  const FLIP_MS = 700, FIRST_HOLD_MS = 1800, HOLD_MS = 2200;   // 넘기는 시간, 첫 장 머무는 시간, 나머지 머무는 시간
   function pSize() {
     const dpr = Math.min(2, devicePixelRatio || 1), r = pframe.getBoundingClientRect();
     pc.width = Math.round(r.width * dpr); pc.height = Math.round(r.height * dpr); if (!pAnim) drawProc();
@@ -569,7 +553,7 @@ body { background: var(--ink); color: var(--paper); font-family: var(--body); fo
       else { pAnim = null; if (dir > 0) { pCur = (pCur + 1) % n; pFlips++; } drawProc(); pLabel(); schedule(); }
     });
   }
-  function schedule() { clearTimeout(pTimer); if (pFlips < PROC.length && pVisible && !document.hidden && lb.hidden && album.hidden) pTimer = setTimeout(flip, HOLD_MS); }
+  function schedule() { clearTimeout(pTimer); if (pFlips < PROC.length && pVisible && !document.hidden && lb.hidden && album.hidden) pTimer = setTimeout(flip, pFlips === 0 ? FIRST_HOLD_MS : HOLD_MS); }
   // 손가락·마우스로 좌우 밀기: 왼쪽으로 밀면 다음, 오른쪽으로 밀면 이전, 톡 누르면 다음
   // 직접 넘기기 시작하면 자동 넘김은 멈춤
   let psx = null, psy = null;
@@ -644,25 +628,6 @@ body { background: var(--ink); color: var(--paper); font-family: var(--body); fo
   document.getElementById("teamHero").addEventListener("click", () => openLb(teamSet, 0));
   const teamAll = document.getElementById("teamAll");
   teamAll.addEventListener("click", () => openAlbum(teamSet, teamAll));
-
-  // 수가표 신청: 인스타 아이디만 접수처(구글 폼)로 보냄
-  // PRICE_FORM.action 과 entry 번호를 채우면 실제로 접수됨
-  const PRICE_FORM = { action: "", insta: "" };
-  const pf = document.getElementById("priceForm"), pfMsg = document.getElementById("pfMsg"), pfBtn = document.getElementById("pfSubmit");
-  pf.addEventListener("submit", e => {
-    e.preventDefault();
-    const insta = document.getElementById("pfInsta").value.trim().replace(/^@+/, "");
-    pfMsg.className = "pf-msg";
-    if (!/^[A-Za-z0-9._]{1,30}$/.test(insta)) { pfMsg.classList.add("err"); pfMsg.textContent = "인스타그램 아이디를 확인해 주세요. (영문, 숫자, . _ 만 가능)"; return document.getElementById("pfInsta").focus(); }
-    if (!PRICE_FORM.action) { pfMsg.classList.add("err"); pfMsg.textContent = "접수 기능을 준비 중입니다."; return; }
-    const body = new URLSearchParams();
-    body.append(PRICE_FORM.insta, "@" + insta);
-    pfBtn.disabled = true; pfMsg.textContent = "보내는 중입니다…";
-    fetch(PRICE_FORM.action, { method: "POST", mode: "no-cors", body })
-      .then(() => { pf.hidden = true; document.getElementById("pfDone").hidden = false; })
-      .catch(() => { pfMsg.classList.add("err"); pfMsg.textContent = "전송하지 못했습니다. 인터넷 연결을 확인하고 다시 눌러 주세요."; })
-      .finally(() => { pfBtn.disabled = false; });
-  });
 
   // 화면에 들어오면 시작, 움직임 줄이기 설정이면 바로 결과
   if (matchMedia("(prefers-reduced-motion: reduce)").matches) { show(N - 1); finish(); return; }
